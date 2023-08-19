@@ -15,6 +15,8 @@ library(cowplot)
 library(ggtree)
 library(patchwork)
 
+### TESTIST DATASET
+
 # connect to loom file
 my.loom.file = file.choose()
 my.loom.file # "/Users/martincalvinotorterolo/Desktop/myR_scripts/data/r_fca_biohub_testis_10x.loom"
@@ -238,3 +240,188 @@ my.dotPlot <- NXF.testis$data %>%
   scale_size_area()
 
 plot_grid(ggtree_plot, NULL, my.dotPlot, nrow=1, rel_widths = c(0.25, -0.005, 2), align= 'h') 
+
+
+
+### OVARY DATASET
+
+?load() # reload saved datasets
+# Slaidina Seurat Object as 'sso'
+ 
+sso <- load("/Users/martincalvinotorterolo/Downloads/GSE162192_Seurat_objects")
+GC_clusters # 14,729 features / genes across 1,051 samples / cells within 2 essays
+FC_clusters # 14,729 features / genes across 13,451 samples / cells within 2 essays
+germarium_clusters # 14,729 features / genes across 636 samples within 2 essays
+ 
+my.gene.markers <- c("rna_sbr",
+                     "rna_nxf2",
+                     "Nxf3",
+                     "rna_nxf4",
+                     "vas",
+                     "CG2887",
+                     "CG6628",
+                     "CG15398",
+                     "HP6",
+                     "bam",
+                     "Orc1",
+                     "CG15628",
+                     "CG3961",
+                     "Nlg2",
+                     "mnd",
+                     "cry",
+                     "CG7255",
+                     "CG17270",
+                     "slif",
+                     "tj",
+                     "Wnt4",
+                     "hh",
+                     "ptc",
+                     "fax",
+                     "en",
+                     "Lmx1a",
+                     "Wnt6",
+                     "NetA",
+                     "Notum",
+                     "laza",
+                     "CG31431",
+                     "CG10073",
+                     "wun2",
+                     "kar",
+                     "peb",
+                     "AdamTS-A",
+                     "Fas3",
+                     "CG1136",
+                     "eya",
+                     "LamC",
+                     "cas",
+                     "sim",
+                     "CG10311",
+                     "upd1",
+                     "upd3",
+                     "CG34377",
+                     "Hk",
+                     "rna_if",
+                     "CG1136",
+                     "CG6044",
+                     "CG15546",
+                     "CG31808",
+                     "ct",
+                     "Asph",
+                     "CG10924",
+                     "mirr",
+                     "Spn42Dd",
+                     "magu",
+                     "Amph",
+                     "ImpL2",
+                     "CG5002",
+                     "laza",
+                     "mid",
+                     "H15",
+                     "CG8303",
+                     "Yp2",
+                     "bond",
+                     "dpp",
+                     "slbo",
+                     "stg",
+                     "rna_Nxt1",
+                     "rna_zuc",
+                     "rna_wde",
+                     "rna_vret",
+                     "rna_vls",
+                     "rna_tej",
+                     "rna_Su(var)3-3",
+                     "rna_spn-E",
+                     "rna_SoYb",
+                     "rna_shu",
+                     "rna_rhi",
+                     "rna_qin",
+                     "rna_piwi",
+                     "rna_Panx",
+                     "rna_Nbr",
+                     "rna_moon",
+                     "rna_mino",
+                     "rna_mael",
+                     "rna_krimp",
+                     "rna_Hen1",
+                     "rna_Gasz",
+                     "rna_egg",
+                     "rna_del",
+                     "rna_cuff",
+                     "rna_csul",
+                     "rna_BoYb",
+                     "rna_aub",
+                     "rna_arx",
+                     "rna_armi",
+                     "rna_AGO3")
+  
+my.gene.markers <- unique(my.gene.markers)
+ 
+clusters.combined <- merge(GC_clusters, y=c(germarium_clusters, FC_clusters),     add.cell.ids=c("germ.Cells", "germarium.Cells", "follicle.Cells"), project="dotPlot.figure")
+  
+gc.clusters <- DotPlot(GC_clusters, features=my.gene.markers) + RotatedAxis()
+germa <- DotPlot(germarium_clusters, features=my.gene.markers) + RotatedAxis()
+fc.clusters <- DotPlot(FC_clusters, features=my.gene.markers) + RotatedAxis() 
+ 
+gc_data <- DotPlot(clusters.combined, features=my.gene.markers) + RotatedAxis()
+id <- factor(gc_data$data$id, order=TRUE, levels=c("GSC/CB/2-cc","4-cc","8-cc","16-cc 2a I","16-cc 2a II","16-cc 2ab","16-cc 2b","16-cc 3","St2","TF/CC","aEC","cEC","pEC","FSC/pre-FC","pre-stalk","stalk","polar","St2-4 I","St2-4 II","PT St4-5","MB St5-6","MB St6","AT St5-6","PT St6","MB St7","MB St8","MB St8-9","MB St9","AT St7","AT St8-9","PT St7","PT St8 I","PT St8 II","PT St9"))
+  
+DotPlot(clusters.combined, features=my.gene.markers) + RotatedAxis()
+DotPlot(GC_clusters, features=my.gene.markers) + RotatedAxis()
+DotPlot(germarium_clusters, features=my.gene.markers) + RotatedAxis()
+DotPlot(FC_clusters, features=my.gene.markers) + RotatedAxis() 
+  
+  
+ggplot(data=gc.clusters$data, aes(x=id, y=gc.clusters$data$features.plot, size=gc.clusters$data$pct.exp, fill=gc.clusters$data$avg.exp.scaled)) + 
+   geom_point(shape=21, color="black") +
+   theme(axis.text.x = element_text(angle=90, hjust=1, vjust=1))
+  
+ggplot(data=germa$data, aes(x=id, y=germa$data$features.plot, size=germa$data$pct.exp, fill=germa$data$avg.exp.scaled)) + 
+   geom_point(shape=21, color="black") +
+   theme(axis.text.x = element_text(angle=90, hjust=1, vjust=1))
+  
+ggplot(data=fc.clusters$data, aes(x=id, y=fc.clusters$data$features.plot, size=fc.clusters$data$pct.exp, fill=fc.clusters$data$avg.exp.scaled)) + 
+   geom_point(shape=21, color="black") +
+   theme(axis.text.x = element_text(angle=90, hjust=1, vjust=1))
+  
+Average_Expression_Scaled <- gc_data$data$avg.exp.scaled
+Percent_Expressed <- gc_data$data$pct.exp
+  
+ggplot(data=gc_data$data, aes(x=factor(gc_data$data$id, order=TRUE, levels=c("GSC/CB/2-cc","4-cc","8-cc","16-cc 2a I","16-cc 2a II","16-cc 2ab","16-cc 2b","16-cc 3","St2","TF/CC","aEC","cEC","pEC","FSC/pre-FC","pre-stalk","stalk","polar","St2-4 I","St2-4 II","PT St4-5","MB St5-6","MB St6","AT St5-6","PT St6","MB St7","MB St8","MB St8-9","MB St9","AT St7","AT St8-9","PT St7","PT St8 I","PT St8 II","PT St9")), y=gc_data$data$features.plot, size=Percent_Expressed, fill=Average_Expression_Scaled)) + 
+   geom_point(shape=21, colour="black") + theme(axis.text.x = element_text(angle=90, hjust=1, vjust=1)) + scale_fill_gradientn(colors=met.brewer('OKeeffe1')) + labs(x="", y="") + scale_size_area()
+ 
+
+
+# cluster all gene markers on the y-axis that are shown on Figure 90A and 90B
+
+markers <- gc_data$data$features.plot %>% unique()  
+View(markers)
+ 
+mat <- gc_data$data %>%
+   filter(features.plot %in% markers) %>%
+   select(-avg.exp, -pct.exp) %>%
+   pivot_wider(names_from=id, values_from=avg.exp.scaled) %>%
+   data.frame()
+  
+ View(mat)
+  
+row.names(mat) <- mat$features.plot
+View(mat)
+ 
+mat <- mat[, -1]
+View(mat)
+ 
+clust <- hclust(dist(mat %>% as.matrix()))
+plot(clust) # plot dendrogram with clustered gene markers
+ 
+ddgram <- as.dendrogram(clust)
+ggtree_plot <- ggtree::ggtree(ddgram)
+ggtree_plot
+ 
+my.dotPlot <- gc_data$data %>% 
+   filter(features.plot %in% markers) %>%
+   filter(pct.exp > 1) %>%
+   mutate(features.plot = factor(features.plot, levels=clust$labels[clust$order])) %>%
+   ggplot(aes(x=factor(id, order=TRUE, levels=c("GSC/CB/2-cc","4-cc","8-cc","16-cc 2a I","16-cc 2a II","16-cc 2ab","16-cc 2b","16-cc 3","St2","TF/CC","aEC","cEC","pEC","FSC/pre-FC","pre-stalk","stalk","polar","St2-4 I","St2-4 II","PT St4-5","MB St5-6","MB St6","AT St5-6","PT St6","MB St7","MB St8","MB St8-9","MB St9","AT St7","AT St8-9","PT St7","PT St8 I","PT St8 II","PT St9")), y=features.plot, fill=avg.exp.scaled, size=pct.exp)) +
+      geom_point(shape=21, colour="black") + theme(axis.text.x = element_text(angle=90, hjust=1, vjust=1)) + scale_fill_gradientn(colors=met.brewer('OKeeffe1')) + labs(x="", y="") + scale_size_area()    
+
+plot_grid(ggtree_plot, NULL, my.dotPlot, nrow=1, rel_widths = c(0.25, -0.005, 2), align= 'h')
